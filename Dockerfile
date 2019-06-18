@@ -1,5 +1,5 @@
 # Using Alpine to keep the images smaller
-FROM alpine:latest
+FROM alpine:latest AS build
 
 # Pushing all files into image
 WORKDIR /app
@@ -18,6 +18,15 @@ RUN apk add --update --no-cache --virtual build-dependencies git python build-ba
  && rm -rf ./src \
 # Cleanup
  && apk del build-dependencies
+
+
+FROM alpine:latest
+
+RUN apk add --update --no-cache nodejs
+
+COPY --from=build /app /app
+
+WORKDIR /app
 
 # Expose port 4002
 EXPOSE 4002
